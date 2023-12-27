@@ -1,2 +1,2 @@
-export * from './product.route'
-export * from './category.route'
+export * from './v1'
+export * from './v2'
