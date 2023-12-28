@@ -1,7 +1,7 @@
-import { MongoClient, ServerApiVersion } from 'mongodb'
+import { MongoClient, ServerApiVersion, Db } from 'mongodb'
 import { env } from '@/config'
 
-let trelloDatabaseInstance: any = null
+let trelloDatabaseInstance: Db | null = null
 
 const mongoClientInstance = new MongoClient(env.MONGODB_URI, {
   serverApi: {

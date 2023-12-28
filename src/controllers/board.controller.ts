@@ -4,7 +4,7 @@ import { BoardService } from '@/services'
 
 const createBoard = async (req: Request, res: Response, next: NextFunction) => {
   new CREATED({
-    message: 'Get list category success!',
+    message: 'Created successfully!',
     metadata: await BoardService.createBoard(req.body)
   }).send(res)
 }
