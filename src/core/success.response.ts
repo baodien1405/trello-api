@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { ReasonPhrases, StatusCodes } from '@/constants'
+import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 
 export class SuccessResponse {
   message: string
@@ -33,7 +33,7 @@ export class CREATED extends SuccessResponse {
   }: {
     message: string
     statusCode?: number
-    reasonStatusCode?: string
+    reasonStatusCode?: ReasonPhrases
     metadata: any
   }) {
     super({ message, statusCode, reasonStatusCode, metadata })

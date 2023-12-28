@@ -1,23 +1,11 @@
-import express, { Request, Response } from 'express'
+import express from 'express'
 
-import { asyncHandler } from '@/helpers'
+import { asyncHandler, validator } from '@/helpers'
+import { createBoardSchema } from '@/validations'
+import { BoardController } from '@/controllers'
 
 const router = express.Router()
 
-router.get(
-  '/',
-  asyncHandler((req: Request, res: Response) => {
-    res.status(200).json({ message: 'Get board!' })
-  })
-)
-
-router.post(
-  '/',
-  asyncHandler(
-    asyncHandler((req: Request, res: Response) => {
-      res.status(201).json({ message: 'Create board!' })
-    })
-  )
-)
+router.post('/', validator(createBoardSchema), asyncHandler(BoardController.createBoard))
 
 export const BoardRoute = router

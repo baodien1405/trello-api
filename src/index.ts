@@ -10,6 +10,7 @@ import App from '@/app'
 import { ErrorResponse } from '@/core'
 import { closeDB, connectDB } from '@/database'
 import { env } from '@/config'
+import { errorHandlingMiddleware } from './middlewares'
 
 const DELAY = 0
 
@@ -36,15 +37,7 @@ const StartServer = async () => {
     next(error)
   })
 
-  app.use((error: ErrorResponse, req: Request, res: Response, next: NextFunction) => {
-    const statusCode = error.code || 500
-    return res.status(statusCode).json({
-      status: error.status,
-      code: statusCode,
-      stack: error.stack,
-      message: error.message || 'Internal Server Error'
-    })
-  })
+  app.use(errorHandlingMiddleware)
 
   app.listen(env.PORT, () => {
     console.log(`3. Listening to the port ${env.PORT}`)

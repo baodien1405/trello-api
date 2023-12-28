@@ -13,11 +13,9 @@ router.get(
 
 router.post(
   '/',
-  asyncHandler(
-    asyncHandler((req: Request, res: Response) => {
-      res.status(201).json('Create card!')
-    })
-  )
+  asyncHandler((req: Request, res: Response) => {
+    res.status(201).json({ message: 'Create card!' })
+  })
 )
 
 export const CardRoute = router

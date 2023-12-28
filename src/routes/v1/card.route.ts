@@ -10,11 +10,9 @@ router.get('/', (req: Request, res: Response) => {
 
 router.post(
   '/',
-  asyncHandler(
-    asyncHandler((req: Request, res: Response) => {
-      res.status(201).json({ message: 'Create card!' })
-    })
-  )
+  asyncHandler((req: Request, res: Response) => {
+    res.status(201).json({ message: 'Create card!' })
+  })
 )
 
 export const CardRoute = router
