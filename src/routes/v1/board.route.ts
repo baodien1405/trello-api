@@ -1,8 +1,9 @@
 import express from 'express'
 
-import { asyncHandler, validator } from '@/helpers'
+import { asyncHandler } from '@/helpers'
 import { createBoardSchema } from '@/validations'
 import { BoardController } from '@/controllers'
+import { validator } from '@/middlewares'
 
 const router = express.Router()
 

@@ -1,6 +1,7 @@
 import Joi from 'joi'
 import { Request, Response, NextFunction } from 'express'
 import { BadRequestError } from '@/core'
+import { getErrorMessage } from '@/utils'
 
 export enum ValidationSource {
   BODY = 'body',
@@ -16,8 +17,7 @@ export const validator = (schema: Joi.AnySchema, source: ValidationSource = Vali
 
       if (!error) return next()
 
-      const { details } = error
-      const message = details.map((i) => i.message.replace(/['"]+/g, '')).join(',')
+      const message = getErrorMessage(error)
 
       next(new BadRequestError(message))
     } catch (error) {
