@@ -9,7 +9,7 @@ import exitHook from 'async-exit-hook'
 import App from '@/app'
 import { ErrorResponse } from '@/core'
 import { closeDB, connectDB } from '@/database'
-import { env } from '@/config'
+import { corsOptions, env } from '@/config'
 import { errorHandlingMiddleware } from './middlewares'
 
 const DELAY = 0
@@ -25,7 +25,7 @@ const StartServer = async () => {
   app.use(helmet())
   app.use(compression())
   app.use(cookieParser())
-  app.use(cors())
+  app.use(cors(corsOptions))
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
 
