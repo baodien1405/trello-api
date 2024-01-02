@@ -29,19 +29,29 @@ const validateBeforeCreateBoard = async (data: Board) => {
 
 const createBoard = async (data: Board) => {
   const validData = await validateBeforeCreateBoard(data)
-  console.log('🚀 ~ createBoard ~ validData:', validData)
   return await getDB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
 }
 
 const findOneById = async (id: ObjectId) => {
-  return await getDB().collection(BOARD_COLLECTION_NAME).findOne({
-    _id: id
-  })
+  return await getDB()
+    .collection(BOARD_COLLECTION_NAME)
+    .findOne({
+      _id: new ObjectId(id)
+    })
+}
+
+const getBoardDetails = async (id: ObjectId) => {
+  return await getDB()
+    .collection(BOARD_COLLECTION_NAME)
+    .findOne({
+      _id: new ObjectId(id)
+    })
 }
 
 export const BoardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createBoard,
-  findOneById
+  findOneById,
+  getBoardDetails
 }

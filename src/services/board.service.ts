@@ -1,5 +1,7 @@
+import { NotFoundError } from '@/core'
 import { BoardModel } from '@/models'
 import { Board } from '@/types'
+import { ObjectId } from 'mongodb'
 import slugify from 'slugify'
 
 const createBoard = async (payload: Board) => {
@@ -14,6 +16,15 @@ const createBoard = async (payload: Board) => {
   return board
 }
 
+const getBoardDetails = async (boardId: ObjectId) => {
+  const board = await BoardModel.getBoardDetails(boardId)
+
+  if (!board) throw new NotFoundError('Board not found!')
+
+  return board
+}
+
 export const BoardService = {
-  createBoard
+  createBoard,
+  getBoardDetails
 }
