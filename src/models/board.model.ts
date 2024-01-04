@@ -5,6 +5,8 @@ import { getDB } from '@/database'
 import { ObjectId } from 'mongodb'
 import { ConflictRequestError } from '@/core'
 import { getErrorMessage } from '@/utils'
+import { ColumnModel } from './column.model'
+import { CardModel } from './card.model'
 
 const BOARD_COLLECTION_NAME = 'boards'
 
@@ -12,6 +14,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object<Board>({
   title: Joi.string().required().min(3).max(50).trim().strict(),
   slug: Joi.string().required().min(3).trim().strict(),
   description: Joi.string().required().min(3).max(256).trim().strict(),
+  type: Joi.string().valid('public', 'private').required(),
   columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
@@ -41,11 +44,35 @@ const findOneById = async (id: ObjectId) => {
 }
 
 const getBoardDetails = async (id: ObjectId) => {
-  return await getDB()
+  const result = await getDB()
     .collection(BOARD_COLLECTION_NAME)
-    .findOne({
-      _id: new ObjectId(id)
-    })
+    .aggregate([
+      {
+        $match: {
+          _id: new ObjectId(id),
+          _destroy: false
+        }
+      },
+      {
+        $lookup: {
+          from: ColumnModel.COLUMN_COLLECTION_NAME,
+          localField: '_id',
+          foreignField: 'boardId',
+          as: 'columns'
+        }
+      },
+      {
+        $lookup: {
+          from: CardModel.CARD_COLLECTION_NAME,
+          localField: '_id',
+          foreignField: 'boardId',
+          as: 'cards'
+        }
+      }
+    ])
+    .toArray()
+
+  return result[0] || null
 }
 
 export const BoardModel = {
