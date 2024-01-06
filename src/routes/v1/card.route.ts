@@ -1,18 +1,13 @@
-import express, { Request, Response } from 'express'
+import express from 'express'
 
 import { asyncHandler } from '@/helpers'
+import { createCardSchema, getCardDetailsSchema } from '@/validations'
+import { CardController } from '@/controllers'
+import { ValidationSource, validator } from '@/middlewares'
 
 const router = express.Router()
 
-router.get('/', (req: Request, res: Response) => {
-  res.status(200).json({ message: 'Get cards!' })
-})
-
-router.post(
-  '/',
-  asyncHandler((req: Request, res: Response) => {
-    res.status(201).json({ message: 'Create card!' })
-  })
-)
+router.post('/', validator(createCardSchema), asyncHandler(CardController.createCard))
+router.get('/:id', validator(getCardDetailsSchema, ValidationSource.PARAM), asyncHandler(CardController.getCardDetails))
 
 export const CardRoute = router
