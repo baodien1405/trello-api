@@ -1,7 +1,7 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 import Joi, { ValidationError } from 'joi'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '@/constants'
-import { Column } from '@/types'
+import { Card, Column } from '@/types'
 import { getErrorMessage } from '@/utils'
 import { ConflictRequestError } from '@/core'
 import { getDB } from '@/database'
@@ -28,20 +28,36 @@ const validateBeforeCreateColumn = async (data: Column) => {
 
 const createColumn = async (data: Column) => {
   const validData = await validateBeforeCreateColumn(data)
-  return await getDB().collection(COLUMN_COLLECTION_NAME).insertOne(validData)
+  const newColumnToAdd = {
+    ...validData,
+    boardId: new ObjectId(validData.boardId)
+  }
+
+  return await getDB().collection(COLUMN_COLLECTION_NAME).insertOne(newColumnToAdd)
 }
 
 const findOneById = async (id: ObjectId) => {
   return await getDB()
-    .collection(COLUMN_COLLECTION_NAME)
+    .collection<Column>(COLUMN_COLLECTION_NAME)
     .findOne({
       _id: new ObjectId(id)
     })
+}
+
+const pushCardOrderIds = async (card: WithId<Card>) => {
+  await getDB()
+    .collection<Column>(COLUMN_COLLECTION_NAME)
+    .findOneAndUpdate(
+      { _id: new ObjectId(card.columnId) },
+      { $push: { cardOrderIds: new ObjectId(card._id) } },
+      { returnDocument: 'after' }
+    )
 }
 
 export const ColumnModel = {
   COLUMN_COLLECTION_NAME,
   COLUMN_COLLECTION_SCHEMA,
   createColumn,
-  findOneById
+  findOneById,
+  pushCardOrderIds
 }

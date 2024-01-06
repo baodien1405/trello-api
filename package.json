@@ -17,7 +17,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@mongoose-plugins/delete": "^1.0.2",
     "async-exit-hook": "^2.0.1",
     "bcrypt": "^5.1.0",
     "compression": "^1.7.4",

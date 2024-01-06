@@ -1,12 +1,16 @@
 import cloneDeep from 'lodash/cloneDeep'
 import { ObjectId } from 'mongodb'
 import { NotFoundError } from '@/core'
-import { CardModel } from '@/models'
+import { CardModel, ColumnModel } from '@/models'
 import { Card } from '@/types'
 
 const createCard = async (payload: Card) => {
   const createdCard = await CardModel.createCard(payload)
   const card = await CardModel.findOneById(createdCard.insertedId)
+
+  if (card) {
+    await ColumnModel.pushCardOrderIds(card)
+  }
 
   return card
 }

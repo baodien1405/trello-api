@@ -1,8 +1,8 @@
 import Joi, { ValidationError } from 'joi'
-import { Board } from '@/types'
+import { Board, Column } from '@/types'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '@/constants'
 import { getDB } from '@/database'
-import { ObjectId } from 'mongodb'
+import { ModifyResult, ObjectId, WithId } from 'mongodb'
 import { ConflictRequestError } from '@/core'
 import { getErrorMessage } from '@/utils'
 import { ColumnModel } from './column.model'
@@ -75,10 +75,21 @@ const getBoardDetails = async (id: ObjectId) => {
   return result[0] || null
 }
 
+const pushColumnOrderIds = async (column: WithId<Column>) => {
+  await getDB()
+    .collection<Board>(BOARD_COLLECTION_NAME)
+    .findOneAndUpdate(
+      { _id: new ObjectId(column.boardId) },
+      { $push: { columnOrderIds: new ObjectId(column._id) } },
+      { returnDocument: 'after' }
+    )
+}
+
 export const BoardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createBoard,
   findOneById,
-  getBoardDetails
+  getBoardDetails,
+  pushColumnOrderIds
 }

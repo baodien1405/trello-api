@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { CREATED, OK } from '@/core'
-import { BoardService, ColumnService } from '@/services'
+import { ColumnService } from '@/services'
 import { ObjectId } from 'mongodb'
 
 const createColumn = async (req: Request, res: Response, next: NextFunction) => {

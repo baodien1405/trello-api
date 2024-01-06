@@ -1,9 +1,9 @@
-import Joi, { ValidationError } from 'joi'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '@/constants'
-import { Card } from '@/types'
-import { getErrorMessage } from '@/utils'
 import { ConflictRequestError } from '@/core'
 import { getDB } from '@/database'
+import { Card } from '@/types'
+import { getErrorMessage } from '@/utils'
+import Joi, { ValidationError } from 'joi'
 import { ObjectId } from 'mongodb'
 
 const CARD_COLLECTION_NAME = 'cards'
@@ -22,7 +22,6 @@ const validateBeforeCreateCard = async (data: Card) => {
   try {
     return await CARD_COLLECTION_SCHEMA.validateAsync(data)
   } catch (error) {
-    console.log('🚀 ~ validateBeforeCreateCard ~ error:', error)
     const message = getErrorMessage(error as ValidationError)
     throw new ConflictRequestError(message)
   }
@@ -30,12 +29,18 @@ const validateBeforeCreateCard = async (data: Card) => {
 
 const createCard = async (data: Card) => {
   const validData = await validateBeforeCreateCard(data)
-  return await getDB().collection(CARD_COLLECTION_NAME).insertOne(validData)
+  const newCardToAdd = {
+    ...validData,
+    boardId: new ObjectId(validData.boardId),
+    columnId: new ObjectId(validData.columnId)
+  }
+
+  return await getDB().collection(CARD_COLLECTION_NAME).insertOne(newCardToAdd)
 }
 
 const findOneById = async (id: ObjectId) => {
   return await getDB()
-    .collection(CARD_COLLECTION_NAME)
+    .collection<Card>(CARD_COLLECTION_NAME)
     .findOne({
       _id: new ObjectId(id)
     })
