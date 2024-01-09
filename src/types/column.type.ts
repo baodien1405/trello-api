@@ -6,7 +6,7 @@ export interface Column {
   title: string
   cardOrderIds: Array<ObjectId>
   cards: Array<Card>
-  createdAt: Date
-  updatedAt: Date
+  createdAt: number
+  updatedAt: number
   _destroy: boolean
 }

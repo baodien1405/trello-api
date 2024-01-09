@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep'
 import { ObjectId } from 'mongodb'
-import { NotFoundError } from '@/core'
+import { BadRequestError, NotFoundError } from '@/core'
 import { BoardModel, ColumnModel } from '@/models'
 import { Column } from '@/types'
 
@@ -26,7 +26,21 @@ const getColumnDetails = async (columnId: ObjectId) => {
   return newColumn
 }
 
+const updateColumn = async (columnId: ObjectId, payload: Partial<Column>) => {
+  const updateData = {
+    ...payload,
+    updatedAt: Date.now()
+  }
+
+  const updatedColumn = await ColumnModel.updateColumn(columnId, updateData)
+
+  if (!updatedColumn) throw new BadRequestError('Failed to update column!')
+
+  return updatedColumn
+}
+
 export const ColumnService = {
   createColumn,
-  getColumnDetails
+  getColumnDetails,
+  updateColumn
 }

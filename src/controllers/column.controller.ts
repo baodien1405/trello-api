@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { CREATED, OK } from '@/core'
+import { CREATED, OK, SuccessResponse } from '@/core'
 import { ColumnService } from '@/services'
 import { ObjectId } from 'mongodb'
 
@@ -19,7 +19,17 @@ const getColumnDetails = async (req: Request, res: Response, next: NextFunction)
   }).send(res)
 }
 
+const updateColumn = async (req: Request, res: Response, next: NextFunction) => {
+  const columnId = new ObjectId(req.params.id)
+
+  new SuccessResponse({
+    message: 'Update column success!',
+    metadata: await ColumnService.updateColumn(columnId, req.body)
+  }).send(res)
+}
+
 export const ColumnController = {
   createColumn,
-  getColumnDetails
+  getColumnDetails,
+  updateColumn
 }

@@ -17,6 +17,8 @@ const COLUMN_COLLECTION_SCHEMA = Joi.object<Column>({
   _destroy: Joi.boolean().default(false)
 })
 
+const INVALID_UPDATE_FIELDS = ['_id', 'boardId', 'createdAt']
+
 const validateBeforeCreateColumn = async (data: Column) => {
   try {
     return await COLUMN_COLLECTION_SCHEMA.validateAsync(data)
@@ -54,10 +56,23 @@ const pushCardOrderIds = async (card: WithId<Card>) => {
     )
 }
 
+const updateColumn = async (columnId: ObjectId, payload: Partial<Column>) => {
+  Object.keys(payload).forEach((fieldName) => {
+    if (INVALID_UPDATE_FIELDS.includes(fieldName)) {
+      delete payload[fieldName as keyof Column]
+    }
+  })
+
+  return await getDB()
+    .collection(COLUMN_COLLECTION_NAME)
+    .findOneAndUpdate({ _id: new ObjectId(columnId) }, { $set: payload }, { returnDocument: 'after' })
+}
+
 export const ColumnModel = {
   COLUMN_COLLECTION_NAME,
   COLUMN_COLLECTION_SCHEMA,
   createColumn,
   findOneById,
-  pushCardOrderIds
+  pushCardOrderIds,
+  updateColumn
 }
