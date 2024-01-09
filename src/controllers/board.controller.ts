@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { CREATED, OK } from '@/core'
+import { CREATED, OK, SuccessResponse } from '@/core'
 import { BoardService } from '@/services'
 import { ObjectId } from 'mongodb'
 
@@ -19,7 +19,17 @@ const getBoardDetails = async (req: Request, res: Response, next: NextFunction) 
   }).send(res)
 }
 
+const updateBoard = async (req: Request, res: Response, next: NextFunction) => {
+  const boardId = new ObjectId(req.params.id)
+
+  new SuccessResponse({
+    message: 'Update board success!',
+    metadata: await BoardService.updateBoard(boardId, req.body)
+  }).send(res)
+}
+
 export const BoardController = {
   createBoard,
-  getBoardDetails
+  getBoardDetails,
+  updateBoard
 }

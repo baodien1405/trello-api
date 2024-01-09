@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import Joi, { ValidationOptions } from 'joi'
 import { Request, Response, NextFunction } from 'express'
 import { BadRequestError } from '@/core'
 import { getErrorMessage } from '@/utils'
@@ -10,10 +10,14 @@ export enum ValidationSource {
   PARAM = 'params'
 }
 
-export const validator = (schema: Joi.AnySchema, source: ValidationSource = ValidationSource.BODY) => {
+export const validator = (
+  schema: Joi.AnySchema,
+  source: ValidationSource = ValidationSource.BODY,
+  options?: ValidationOptions
+) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { error } = schema.validate(req[source])
+      const { error } = schema.validate(req[source], options)
 
       if (!error) return next()
 

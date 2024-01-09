@@ -1,4 +1,4 @@
-import { NotFoundError } from '@/core'
+import { BadRequestError, NotFoundError } from '@/core'
 import { BoardModel } from '@/models'
 import { Board } from '@/types'
 import { ObjectId } from 'mongodb'
@@ -33,7 +33,21 @@ const getBoardDetails = async (boardId: ObjectId) => {
   return newBoard
 }
 
+const updateBoard = async (boardId: ObjectId, payload: Partial<Board>) => {
+  const updateData = {
+    ...payload,
+    updatedAt: Date.now()
+  }
+
+  const updatedBoard = await BoardModel.updateBoard(boardId, updateData)
+
+  if (!updatedBoard) throw new BadRequestError('Failed to update board!')
+
+  return updatedBoard
+}
+
 export const BoardService = {
   createBoard,
-  getBoardDetails
+  getBoardDetails,
+  updateBoard
 }

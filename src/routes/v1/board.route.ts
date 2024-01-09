@@ -1,7 +1,7 @@
 import express from 'express'
 
 import { asyncHandler } from '@/helpers'
-import { createBoardSchema, getBoardDetailsSchema } from '@/validations'
+import { createBoardSchema, getBoardDetailsSchema, updateBoardSchema } from '@/validations'
 import { BoardController } from '@/controllers'
 import { ValidationSource, validator } from '@/middlewares'
 
@@ -12,6 +12,11 @@ router.get(
   '/:id',
   validator(getBoardDetailsSchema, ValidationSource.PARAM),
   asyncHandler(BoardController.getBoardDetails)
+)
+router.patch(
+  '/:id',
+  validator(updateBoardSchema, ValidationSource.BODY, { allowUnknown: true }),
+  asyncHandler(BoardController.updateBoard)
 )
 
 export const BoardRoute = router
