@@ -11,3 +11,11 @@ export interface Board {
   updatedAt?: number
   _destroy?: boolean
 }
+
+export interface MoveCardDiffColumnPayload {
+  currentCardId: ObjectId
+  prevColumnId: ObjectId
+  prevCardOrderIds: ObjectId[]
+  nextColumnId: ObjectId
+  nextCardOrderIds: ObjectId[]
+}

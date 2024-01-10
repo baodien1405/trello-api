@@ -94,6 +94,10 @@ const updateBoard = async (boardId: ObjectId, payload: Partial<Board>) => {
     }
   })
 
+  if (payload.columnOrderIds) {
+    payload.columnOrderIds = payload.columnOrderIds.map((_id) => new ObjectId(_id))
+  }
+
   return await getDB()
     .collection(BOARD_COLLECTION_NAME)
     .findOneAndUpdate({ _id: new ObjectId(boardId) }, { $set: payload }, { returnDocument: 'after' })

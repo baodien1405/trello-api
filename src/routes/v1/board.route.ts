@@ -1,7 +1,12 @@
 import express from 'express'
 
 import { asyncHandler } from '@/helpers'
-import { createBoardSchema, getBoardDetailsSchema, updateBoardSchema } from '@/validations'
+import {
+  createBoardSchema,
+  getBoardDetailsSchema,
+  moveCardToDifferentColumnSchema,
+  updateBoardSchema
+} from '@/validations'
 import { BoardController } from '@/controllers'
 import { ValidationSource, validator } from '@/middlewares'
 
@@ -17,6 +22,11 @@ router.patch(
   '/:id',
   validator(updateBoardSchema, ValidationSource.BODY, { allowUnknown: true }),
   asyncHandler(BoardController.updateBoard)
+)
+router.put(
+  '/supports/moving_card',
+  validator(moveCardToDifferentColumnSchema),
+  asyncHandler(BoardController.moveCardToDifferentColumn)
 )
 
 export const BoardRoute = router

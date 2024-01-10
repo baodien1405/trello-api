@@ -63,6 +63,10 @@ const updateColumn = async (columnId: ObjectId, payload: Partial<Column>) => {
     }
   })
 
+  if (payload.cardOrderIds) {
+    payload.cardOrderIds = payload.cardOrderIds.map((_id) => new ObjectId(_id))
+  }
+
   return await getDB()
     .collection(COLUMN_COLLECTION_NAME)
     .findOneAndUpdate({ _id: new ObjectId(columnId) }, { $set: payload }, { returnDocument: 'after' })

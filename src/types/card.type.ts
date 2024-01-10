@@ -5,7 +5,7 @@ export interface Card {
   columnId: ObjectId
   title: string
   description?: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date | number
+  updatedAt: Date | number
   _destroy: boolean
 }
