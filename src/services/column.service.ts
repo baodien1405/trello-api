@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep'
 import { ObjectId } from 'mongodb'
 import { BadRequestError, NotFoundError } from '@/core'
-import { BoardModel, ColumnModel } from '@/models'
+import { BoardModel, CardModel, ColumnModel } from '@/models'
 import { Column } from '@/types'
 
 const createColumn = async (payload: Column) => {
@@ -39,8 +39,23 @@ const updateColumn = async (columnId: ObjectId, payload: Partial<Column>) => {
   return updatedColumn
 }
 
+const deleteColumn = async (columnId: ObjectId) => {
+  const existColumn = await ColumnModel.findOneById(columnId)
+
+  if (!existColumn) throw new NotFoundError('Column not found!')
+
+  await ColumnModel.deleteOneById(columnId)
+
+  await CardModel.deleteManyByColumnId(columnId)
+
+  await BoardModel.pullColumnOrderIds(existColumn)
+
+  return { deleteResult: 'Column and its cards deleted successfully' }
+}
+
 export const ColumnService = {
   createColumn,
   getColumnDetails,
-  updateColumn
+  updateColumn,
+  deleteColumn
 }

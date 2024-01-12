@@ -13,6 +13,7 @@ import { ValidationSource, validator } from '@/middlewares'
 const router = express.Router()
 
 router.post('/', validator(createBoardSchema), asyncHandler(BoardController.createBoard))
+
 router.get(
   '/:id',
   validator(getBoardDetailsSchema, ValidationSource.PARAM),

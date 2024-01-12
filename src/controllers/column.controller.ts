@@ -28,8 +28,18 @@ const updateColumn = async (req: Request, res: Response, next: NextFunction) => 
   }).send(res)
 }
 
+const deleteColumn = async (req: Request, res: Response, next: NextFunction) => {
+  const columnId = new ObjectId(req.params.id)
+
+  new SuccessResponse({
+    message: 'Delete column success!',
+    metadata: await ColumnService.deleteColumn(columnId)
+  }).send(res)
+}
+
 export const ColumnController = {
   createColumn,
   getColumnDetails,
-  updateColumn
+  updateColumn,
+  deleteColumn
 }

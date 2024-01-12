@@ -87,6 +87,16 @@ const pushColumnOrderIds = async (column: WithId<Column>) => {
     )
 }
 
+const pullColumnOrderIds = async (column: WithId<Column>) => {
+  return await getDB()
+    .collection<Board>(BOARD_COLLECTION_NAME)
+    .findOneAndUpdate(
+      { _id: new ObjectId(column.boardId) },
+      { $pull: { columnOrderIds: new ObjectId(column._id) } },
+      { returnDocument: 'after' }
+    )
+}
+
 const updateBoard = async (boardId: ObjectId, payload: Partial<Board>) => {
   Object.keys(payload).forEach((fieldName) => {
     if (INVALID_UPDATE_FIELDS.includes(fieldName)) {
@@ -110,5 +120,6 @@ export const BoardModel = {
   findOneById,
   getBoardDetails,
   pushColumnOrderIds,
+  pullColumnOrderIds,
   updateBoard
 }

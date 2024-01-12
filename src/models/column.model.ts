@@ -72,11 +72,20 @@ const updateColumn = async (columnId: ObjectId, payload: Partial<Column>) => {
     .findOneAndUpdate({ _id: new ObjectId(columnId) }, { $set: payload }, { returnDocument: 'after' })
 }
 
+const deleteOneById = async (columnId: ObjectId) => {
+  return await getDB()
+    .collection<Column>(COLUMN_COLLECTION_NAME)
+    .deleteOne({
+      _id: new ObjectId(columnId)
+    })
+}
+
 export const ColumnModel = {
   COLUMN_COLLECTION_NAME,
   COLUMN_COLLECTION_SCHEMA,
   createColumn,
   findOneById,
   pushCardOrderIds,
-  updateColumn
+  updateColumn,
+  deleteOneById
 }

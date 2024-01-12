@@ -1,22 +1,30 @@
 import express from 'express'
 
 import { asyncHandler } from '@/helpers'
-import { createColumnSchema, getColumnDetailsSchema, updateBoardSchema } from '@/validations'
+import { createColumnSchema, deleteColumnSchema, getColumnDetailsSchema, updateColumnSchema } from '@/validations'
 import { ColumnController } from '@/controllers'
 import { ValidationSource, validator } from '@/middlewares'
 
 const router = express.Router()
 
 router.post('/', validator(createColumnSchema), asyncHandler(ColumnController.createColumn))
+
 router.get(
   '/:id',
   validator(getColumnDetailsSchema, ValidationSource.PARAM),
   asyncHandler(ColumnController.getColumnDetails)
 )
+
 router.patch(
   '/:id',
-  validator(updateBoardSchema, ValidationSource.BODY, { allowUnknown: true }),
+  validator(updateColumnSchema, ValidationSource.BODY, { allowUnknown: true }),
   asyncHandler(ColumnController.updateColumn)
+)
+
+router.delete(
+  '/:id',
+  validator(deleteColumnSchema, ValidationSource.PARAM),
+  asyncHandler(ColumnController.deleteColumn)
 )
 
 export const ColumnRoute = router
