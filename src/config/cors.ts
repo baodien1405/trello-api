@@ -5,7 +5,7 @@ import { CorsOptions } from 'cors'
 
 export const corsOptions: CorsOptions = {
   origin: function (origin, callback) {
-    if (!origin && env.NODE_ENV === 'development') {
+    if (env.NODE_ENV === 'development') {
       return callback(null, true)
     }
 

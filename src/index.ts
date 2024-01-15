@@ -39,9 +39,15 @@ const StartServer = async () => {
 
   app.use(errorHandlingMiddleware)
 
-  app.listen(env.PORT, () => {
-    console.log(`3. Listening to the port ${env.PORT}`)
-  })
+  if (env.NODE_ENV === 'production') {
+    app.listen(process.env.PORT, () => {
+      console.log(`3. Production: Listening to the port ${process.env.PORT}`)
+    })
+  } else {
+    app.listen(env.PORT, () => {
+      console.log(`3. Local: Listening to the port ${env.PORT}`)
+    })
+  }
 
   exitHook(() => {
     console.log('4. Disconnecting to MongoDB Cloud Atlas...')
