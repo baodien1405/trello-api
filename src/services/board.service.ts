@@ -4,6 +4,7 @@ import { Board, MoveCardDiffColumnPayload } from '@/types'
 import { ObjectId } from 'mongodb'
 import slugify from 'slugify'
 import cloneDeep from 'lodash/cloneDeep'
+import { DEFAULT_CURRENT_PAGE, DEFAULT_ITEMS_PER_PAGE } from '@/constants'
 
 const createBoard = async (payload: Board) => {
   const newBoard = {
@@ -65,9 +66,16 @@ const moveCardToDifferentColumn = async (payload: MoveCardDiffColumnPayload) => 
   return { updateResult: 'Successfully' }
 }
 
+const getBoardList = async ({ page = DEFAULT_CURRENT_PAGE, limit = DEFAULT_ITEMS_PER_PAGE }) => {
+  const results = await BoardModel.getBoardList({ page, limit })
+
+  return results
+}
+
 export const BoardService = {
   createBoard,
   getBoardDetails,
   updateBoard,
-  moveCardToDifferentColumn
+  moveCardToDifferentColumn,
+  getBoardList
 }

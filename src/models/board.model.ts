@@ -1,10 +1,10 @@
 import Joi, { ValidationError } from 'joi'
-import { Board, Column } from '@/types'
+import { Board, Column, QueryBoardParams } from '@/types'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '@/constants'
 import { getDB } from '@/database'
-import { ModifyResult, ObjectId, WithId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 import { ConflictRequestError } from '@/core'
-import { getErrorMessage } from '@/utils'
+import { getErrorMessage, pagingSkipValue } from '@/utils'
 import { ColumnModel } from './column.model'
 import { CardModel } from './card.model'
 
@@ -113,6 +113,36 @@ const updateBoard = async (boardId: ObjectId, payload: Partial<Board>) => {
     .findOneAndUpdate({ _id: new ObjectId(boardId) }, { $set: payload }, { returnDocument: 'after' })
 }
 
+const getBoardList = async ({ page, limit }: QueryBoardParams) => {
+  const queryConditions = [{ _destroy: false }]
+
+  const query = await getDB()
+    .collection(BOARD_COLLECTION_NAME)
+    .aggregate(
+      [
+        { $match: { $and: queryConditions } },
+        { $sort: { title: 1 } }, //title A-Z
+        {
+          $facet: {
+            boards: [{ $skip: pagingSkipValue(page, limit) }, { $limit: limit }],
+            totalBoards: [{ $count: 'countedBoards' }]
+          }
+        }
+      ],
+      { collation: { locale: 'en' } }
+    )
+    .toArray()
+
+  return {
+    boards: query[0].boards || [],
+    pagination: {
+      page,
+      limit,
+      totalRows: query[0].totalBoards[0]?.countedBoards || 0
+    }
+  }
+}
+
 export const BoardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
@@ -121,5 +151,6 @@ export const BoardModel = {
   getBoardDetails,
   pushColumnOrderIds,
   pullColumnOrderIds,
-  updateBoard
+  updateBoard,
+  getBoardList
 }

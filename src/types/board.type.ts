@@ -19,3 +19,8 @@ export interface MoveCardDiffColumnPayload {
   nextColumnId: ObjectId
   nextCardOrderIds: ObjectId[]
 }
+
+export interface QueryBoardParams {
+  limit: number
+  page: number
+}

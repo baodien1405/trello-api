@@ -14,16 +14,20 @@ const router = express.Router()
 
 router.post('/', validator(createBoardSchema), asyncHandler(BoardController.createBoard))
 
+router.get('/', asyncHandler(BoardController.getBoardList))
+
 router.get(
   '/:id',
   validator(getBoardDetailsSchema, ValidationSource.PARAM),
   asyncHandler(BoardController.getBoardDetails)
 )
+
 router.patch(
   '/:id',
   validator(updateBoardSchema, ValidationSource.BODY, { allowUnknown: true }),
   asyncHandler(BoardController.updateBoard)
 )
+
 router.put(
   '/supports/moving_card',
   validator(moveCardToDifferentColumnSchema),
