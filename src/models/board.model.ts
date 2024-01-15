@@ -134,7 +134,7 @@ const getBoardList = async ({ page, limit }: QueryBoardParams) => {
     .toArray()
 
   return {
-    boards: query[0].boards || [],
+    results: query[0].boards || [],
     pagination: {
       page,
       limit,
