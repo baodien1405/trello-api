@@ -1,2 +1,2 @@
-export * from './createCard.schema'
-export * from './getCardDetails.schema'
+export * from './create-card.schema'
+export * from './get-card-details.schema'

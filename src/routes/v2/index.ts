@@ -6,4 +6,4 @@ const router = express.Router()
 
 router.use('/cards', CardRoute)
 
-export const APIs_ROUTE_V2 = router
+export const API_ROUTE_V2 = router
