@@ -9,7 +9,12 @@ export const corsOptions: CorsOptions = {
       return callback(null, true)
     }
 
-    if (WHITELIST_DOMAINS.includes(origin as string)) {
+    // Allow requests with no origin (e.g., same-origin SSR requests)
+    if (!origin) {
+      return callback(null, true)
+    }
+
+    if (WHITELIST_DOMAINS.includes(origin)) {
       return callback(null, true)
     }
 
