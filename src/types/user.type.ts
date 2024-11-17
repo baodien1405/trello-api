@@ -8,7 +8,7 @@ export interface User {
   avatar?: string | null
   role?: UserRole
   isActive?: boolean
-  verifyToken: string
+  verifyToken: string | null
   createdAt?: number
   updatedAt?: number
   _destroy?: boolean

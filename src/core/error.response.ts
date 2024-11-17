@@ -70,3 +70,13 @@ export class NotFoundError extends ErrorResponse {
     super(message, status, code)
   }
 }
+
+export class NotAcceptable extends ErrorResponse {
+  constructor(
+    message: string | ReasonPhrases = ReasonPhrases.NOT_ACCEPTABLE,
+    status = ReasonPhrases.NOT_ACCEPTABLE,
+    code = StatusCodes.NOT_ACCEPTABLE
+  ) {
+    super(message, status, code)
+  }
+}

@@ -9,5 +9,6 @@ const router = express.Router()
 
 router.post('/users/register', validator(authSchema.register), asyncHandler(AuthController.register))
 router.post('/users/login', validator(authSchema.login), asyncHandler(AuthController.login))
+router.put('/users/verify', validator(authSchema.verify), asyncHandler(AuthController.verify))
 
 export { router as AuthRoute }

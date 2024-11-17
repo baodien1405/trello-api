@@ -17,7 +17,15 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   }).send(res)
 }
 
+const verify = async (req: Request, res: Response, next: NextFunction) => {
+  new SuccessResponse({
+    message: 'Successfully!',
+    metadata: await AuthService.verify(req.body)
+  }).send(res)
+}
+
 export const AuthController = {
   register,
-  login
+  login,
+  verify
 }

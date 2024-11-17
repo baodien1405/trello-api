@@ -1,7 +1,9 @@
-import { loginSchema } from './login.schema'
-import { registerSchema } from './register.schema'
+import { loginSchema } from '@/validations/auth/login.schema'
+import { registerSchema } from '@/validations/auth/register.schema'
+import { verifySchema } from '@/validations/auth/verify.schema'
 
 export const authSchema = {
   login: loginSchema,
-  register: registerSchema
+  register: registerSchema,
+  verify: verifySchema
 }

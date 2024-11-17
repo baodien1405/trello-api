@@ -1,12 +1,26 @@
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
+import crypto from 'crypto'
+import { ObjectId } from 'mongodb'
 
-import { BadRequestError, ConflictRequestError } from '@/core'
+import { BadRequestError, ConflictRequestError, NotAcceptable, NotFoundError } from '@/core'
 import { UserModel } from '@/models'
-import { Login, Register } from '@/types'
-import { getInfoData } from '@/utils'
+import { Login, Register, Verify } from '@/types'
+import { createTokenPair, getInfoData } from '@/utils'
 import { WEBSITE_DOMAIN } from '@/constants'
 import { BrevoProvider } from '@/config'
+
+const generateTokenPair = async ({ _id, email }: { _id: ObjectId; email: string }) => {
+  const privateKey = crypto.randomBytes(64).toString('hex')
+  const publicKey = crypto.randomBytes(64).toString('hex')
+
+  const { accessToken, refreshToken } = createTokenPair({ _id, email }, publicKey, privateKey)
+
+  return {
+    accessToken,
+    refreshToken
+  }
+}
 
 const register = async ({ email, password }: Register) => {
   const existUser = await UserModel.findOneByEmail(email)
@@ -52,10 +66,57 @@ const register = async ({ email, password }: Register) => {
 }
 
 const login = async ({ email, password }: Login) => {
-  return {}
+  const existUser = await UserModel.findOneByEmail(email)
+
+  if (!existUser) throw new NotFoundError('Account not found!')
+
+  if (!existUser.isActive) throw new NotAcceptable('Your account is not active')
+
+  if (!bcrypt.compareSync(password, existUser.password)) throw new NotAcceptable('Your email or password is incorrect!')
+
+  const userInfo = {
+    _id: existUser._id,
+    email: existUser.email
+  }
+
+  const { accessToken, refreshToken } = await generateTokenPair(userInfo)
+
+  return {
+    user: getInfoData({
+      fields: ['_id', 'email', 'username', 'displayName', 'verifyToken', 'role'],
+      object: existUser
+    }),
+    accessToken,
+    refreshToken
+  }
+}
+
+const verify = async ({ email, token }: Verify) => {
+  const existUser = await UserModel.findOneByEmail(email)
+
+  if (!existUser) throw new NotFoundError('Account not found!')
+
+  if (existUser.isActive) throw new NotAcceptable('Your account is already active')
+
+  if (token !== existUser.verifyToken) throw new NotAcceptable('Token is invalid!')
+
+  const updateData = {
+    isActive: true,
+    verifyToken: null
+  }
+
+  const updatedUser = await UserModel.updateUser(existUser._id, updateData)
+
+  return {
+    user: getInfoData({
+      fields: ['_id', 'email', 'username', 'displayName', 'verifyToken', 'role'],
+      object: updatedUser
+    })
+  }
 }
 
 export const AuthService = {
   register,
-  login
+  login,
+  verify
 }
