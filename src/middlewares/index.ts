@@ -1,2 +1,3 @@
-export * from './errorHandling.middleware'
+export * from './error-handling.middleware'
 export * from './validator.middleware'
+export * from './auth.middleware'

@@ -80,3 +80,13 @@ export class NotAcceptable extends ErrorResponse {
     super(message, status, code)
   }
 }
+
+export class Gone extends ErrorResponse {
+  constructor(
+    message: string | ReasonPhrases = ReasonPhrases.GONE,
+    status = ReasonPhrases.GONE,
+    code = StatusCodes.GONE
+  ) {
+    super(message, status, code)
+  }
+}

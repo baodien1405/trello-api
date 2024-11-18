@@ -1,26 +1,12 @@
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
-import crypto from 'crypto'
-import { ObjectId } from 'mongodb'
 
+import { BrevoProvider } from '@/config'
+import { WEBSITE_DOMAIN } from '@/constants'
 import { BadRequestError, ConflictRequestError, NotAcceptable, NotFoundError } from '@/core'
 import { UserModel } from '@/models'
 import { Login, Register, Verify } from '@/types'
 import { createTokenPair, getInfoData } from '@/utils'
-import { WEBSITE_DOMAIN } from '@/constants'
-import { BrevoProvider } from '@/config'
-
-const generateTokenPair = async ({ _id, email }: { _id: ObjectId; email: string }) => {
-  const privateKey = crypto.randomBytes(64).toString('hex')
-  const publicKey = crypto.randomBytes(64).toString('hex')
-
-  const { accessToken, refreshToken } = createTokenPair({ _id, email }, publicKey, privateKey)
-
-  return {
-    accessToken,
-    refreshToken
-  }
-}
 
 const register = async ({ email, password }: Register) => {
   const existUser = await UserModel.findOneByEmail(email)
@@ -79,7 +65,7 @@ const login = async ({ email, password }: Login) => {
     email: existUser.email
   }
 
-  const { accessToken, refreshToken } = await generateTokenPair(userInfo)
+  const { accessToken, refreshToken } = createTokenPair(userInfo)
 
   return {
     user: getInfoData({

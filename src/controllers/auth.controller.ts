@@ -11,9 +11,26 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
+  const result = await AuthService.login(req.body)
+  const LIFE_TIME_COOKIE = 1000 * 60 * 24 * 14
+
+  res.cookie('accessToken', result.accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: LIFE_TIME_COOKIE
+  })
+
+  res.cookie('refreshToken', result.refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: LIFE_TIME_COOKIE
+  })
+
   new SuccessResponse({
     message: 'Successfully!',
-    metadata: await AuthService.login(req.body)
+    metadata: result
   }).send(res)
 }
 

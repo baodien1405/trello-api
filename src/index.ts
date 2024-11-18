@@ -21,6 +21,11 @@ const StartServer = async () => {
     setTimeout(next, DELAY)
   })
 
+  app.use(function (req, res, next) {
+    res.set('Cache-Control', 'no-store')
+    next()
+  })
+
   app.use(morgan('dev'))
   app.use(helmet())
   app.use(compression())

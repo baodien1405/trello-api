@@ -8,9 +8,11 @@ import {
   updateBoardSchema
 } from '@/validations'
 import { BoardController } from '@/controllers'
-import { ValidationSource, validator } from '@/middlewares'
+import { authMiddleware, ValidationSource, validator } from '@/middlewares'
 
 const router = express.Router()
+
+router.use(authMiddleware.authentication)
 
 router.post('/', validator(createBoardSchema), asyncHandler(BoardController.createBoard))
 
