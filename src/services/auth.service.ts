@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 
-import { BrevoProvider } from '@/config'
+import { BrevoProvider, env } from '@/config'
 import { WEBSITE_DOMAIN } from '@/constants'
-import { BadRequestError, ConflictRequestError, NotAcceptable, NotFoundError } from '@/core'
+import { BadRequestError, ConflictRequestError, ForbiddenError, NotAcceptable, NotFoundError } from '@/core'
 import { UserModel } from '@/models'
 import { Login, Register, Verify } from '@/types'
-import { createTokenPair, getInfoData } from '@/utils'
+import { createTokenPair, getInfoData, verifyJWT } from '@/utils'
 
 const register = async ({ email, password }: Register) => {
   const existUser = await UserModel.findOneByEmail(email)
@@ -101,8 +101,29 @@ const verify = async ({ email, token }: Verify) => {
   }
 }
 
+const refreshToken = async (clientRefreshToken: string) => {
+  try {
+    const decodedRefreshToken = await verifyJWT(clientRefreshToken, env.REFRESH_TOKEN_SECRET_SIGNATURE as string)
+
+    const userInfo = {
+      _id: decodedRefreshToken._id,
+      email: decodedRefreshToken.email
+    }
+
+    const { accessToken, refreshToken } = createTokenPair(userInfo)
+
+    return {
+      accessToken,
+      refreshToken
+    }
+  } catch (error) {
+    throw new ForbiddenError('Please sign in! (Error from refresh token)')
+  }
+}
+
 export const AuthService = {
   register,
   login,
-  verify
+  verify,
+  refreshToken
 }

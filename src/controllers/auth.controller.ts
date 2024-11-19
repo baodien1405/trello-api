@@ -41,8 +41,44 @@ const verify = async (req: Request, res: Response, next: NextFunction) => {
   }).send(res)
 }
 
+const logout = async (req: Request, res: Response, next: NextFunction) => {
+  res.clearCookie('accessToken')
+  res.clearCookie('refreshToken')
+
+  new SuccessResponse({
+    message: 'Successfully!',
+    metadata: { loggedOut: true }
+  }).send(res)
+}
+
+const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+  const LIFE_TIME_COOKIE = 1000 * 60 * 24 * 14
+  const result = await AuthService.refreshToken(req.cookies?.refreshToken)
+
+  res.cookie('accessToken', result.accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: LIFE_TIME_COOKIE
+  })
+
+  res.cookie('refreshToken', result.refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: LIFE_TIME_COOKIE
+  })
+
+  new SuccessResponse({
+    message: 'Successfully!',
+    metadata: result
+  }).send(res)
+}
+
 export const AuthController = {
   register,
   login,
-  verify
+  verify,
+  logout,
+  refreshToken
 }
