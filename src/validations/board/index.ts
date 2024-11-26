@@ -1,4 +1,11 @@
-export * from './create-board.schema'
-export * from './get-board-details.schema'
-export * from './update-board.schema'
-export * from './move-card-to-different-column.schema'
+import { createBoardSchema } from '@/validations/board/create-board.schema'
+import { getBoardDetailsSchema } from '@/validations/board/get-board-details.schema'
+import { moveCardToDifferentColumnSchema } from '@/validations/board/move-card-to-different-column.schema'
+import { updateBoardSchema } from '@/validations/board/update-board.schema'
+
+export const boardSchema = {
+  createBoard: createBoardSchema,
+  getBoardDetails: getBoardDetailsSchema,
+  moveCardToDifferentColumn: moveCardToDifferentColumnSchema,
+  updateBoard: updateBoardSchema
+}

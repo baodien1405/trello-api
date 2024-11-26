@@ -13,3 +13,9 @@ export interface User {
   updatedAt?: number
   _destroy?: boolean
 }
+
+export interface UpdateUserPayload {
+  displayName?: string
+  current_password: string
+  new_password: string
+}

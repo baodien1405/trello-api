@@ -13,4 +13,4 @@ router.put('/users/verify', validator(authSchema.verify), asyncHandler(AuthContr
 router.delete('/users/logout', asyncHandler(AuthController.logout))
 router.get('/users/refreshToken', asyncHandler(AuthController.refreshToken))
 
-export { router as AuthRoute }
+export const AuthRoute = router

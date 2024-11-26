@@ -1,2 +1,7 @@
-export * from './create-card.schema'
-export * from './get-card-details.schema'
+import { createCardSchema } from '@/validations/card/create-card.schema'
+import { getCardDetailsSchema } from '@/validations/card/get-card-details.schema'
+
+export const cardSchema = {
+  createCard: createCardSchema,
+  getCardDetails: getCardDetailsSchema
+}
