@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { asyncHandler } from '@/helpers'
-import { AuthFailureError, Gone } from '@/core'
+import { AuthFailureError } from '@/core'
 import { verifyJWT } from '@/utils'
 import { env } from '@/config'
 
@@ -17,10 +17,6 @@ const authentication = asyncHandler(async (req: Request, res: Response, next: Ne
 
     return next()
   } catch (error: any) {
-    if (error?.message?.includes('jwt expired')) {
-      throw new Gone('Need to refresh token')
-    }
-
     throw new AuthFailureError('Unauthorized!')
   }
 })

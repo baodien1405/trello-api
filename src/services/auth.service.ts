@@ -44,7 +44,10 @@ const register = async ({ email, password }: Register) => {
     })
 
     return {
-      user: getInfoData({ fields: ['_id', 'email', 'username', 'displayName', 'verifyToken', 'role'], object: newUser })
+      user: getInfoData({
+        fields: ['_id', 'email', 'username', 'displayName', 'verifyToken', 'role', 'avatar'],
+        object: newUser
+      })
     }
   }
 
@@ -69,7 +72,7 @@ const login = async ({ email, password }: Login) => {
 
   return {
     user: getInfoData({
-      fields: ['_id', 'email', 'username', 'displayName', 'verifyToken', 'role'],
+      fields: ['_id', 'email', 'username', 'displayName', 'verifyToken', 'role', 'avatar'],
       object: existUser
     }),
     accessToken,
@@ -95,7 +98,7 @@ const verify = async ({ email, token }: Verify) => {
 
   return {
     user: getInfoData({
-      fields: ['_id', 'email', 'username', 'displayName', 'verifyToken', 'role'],
+      fields: ['_id', 'email', 'username', 'displayName', 'verifyToken', 'role', 'avatar'],
       object: updatedUser
     })
   }

@@ -6,7 +6,7 @@ import { UserService } from '@/services'
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   new SuccessResponse({
     message: 'Successfully!',
-    metadata: await UserService.updateUser(req.user._id, req.body)
+    metadata: await UserService.updateUser(req.user._id, req.body, req.file)
   }).send(res)
 }
 
