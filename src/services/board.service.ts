@@ -66,8 +66,12 @@ const moveCardToDifferentColumn = async (payload: MoveCardDiffColumnPayload) => 
   return { updateResult: 'Successfully' }
 }
 
-const getBoardList = async ({ page = DEFAULT_CURRENT_PAGE, limit = DEFAULT_ITEMS_PER_PAGE }) => {
-  const results = await BoardModel.getBoardList({ page, limit })
+const getBoardList = async ({ page = DEFAULT_CURRENT_PAGE, limit = DEFAULT_ITEMS_PER_PAGE, userId = '' }) => {
+  const results = await BoardModel.getBoardList({
+    page: Number(page),
+    limit: Number(limit),
+    userId: new ObjectId(userId)
+  })
 
   return results
 }

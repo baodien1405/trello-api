@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
+import { ObjectId } from 'mongodb'
+
 import { CREATED, OK, SuccessResponse } from '@/core'
 import { BoardService } from '@/services'
-import { ObjectId } from 'mongodb'
 
 const createBoard = async (req: Request, res: Response, next: NextFunction) => {
   new CREATED({
@@ -38,7 +39,10 @@ const moveCardToDifferentColumn = async (req: Request, res: Response, next: Next
 const getBoardList = async (req: Request, res: Response, next: NextFunction) => {
   new SuccessResponse({
     message: 'Get boards successfully!',
-    metadata: await BoardService.getBoardList(req.params)
+    metadata: await BoardService.getBoardList({
+      ...req.query,
+      userId: req.user._id
+    })
   }).send(res)
 }
 

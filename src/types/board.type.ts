@@ -7,6 +7,8 @@ export interface Board {
   type: string
   slug?: string
   columnOrderIds: Array<ObjectId>
+  ownerIds: Array<ObjectId>
+  memberIds: Array<ObjectId>
   createdAt?: number
   updatedAt?: number
   _destroy?: boolean

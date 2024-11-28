@@ -16,6 +16,8 @@ const BOARD_COLLECTION_SCHEMA = Joi.object<Board>({
   description: Joi.string().required().min(3).max(256).trim().strict(),
   type: Joi.string().valid('public', 'private').required(),
   columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+  ownerIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+  memberIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
   createdAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
@@ -113,8 +115,11 @@ const updateBoard = async (boardId: ObjectId, payload: Partial<Board>) => {
     .findOneAndUpdate({ _id: new ObjectId(boardId) }, { $set: payload }, { returnDocument: 'after' })
 }
 
-const getBoardList = async ({ page, limit }: QueryBoardParams) => {
-  const queryConditions = [{ _destroy: false }]
+const getBoardList = async ({ page, limit, userId }: QueryBoardParams & { userId: ObjectId }) => {
+  const queryConditions = [
+    { _destroy: false },
+    { $or: [{ ownerIds: { $all: [new ObjectId(userId)] } }, { memberIds: { $all: [new ObjectId(userId)] } }] }
+  ]
 
   const query = await getDB()
     .collection(BOARD_COLLECTION_NAME)
