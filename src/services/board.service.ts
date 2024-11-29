@@ -1,18 +1,18 @@
 import { BadRequestError, NotFoundError } from '@/core'
 import { BoardModel, CardModel, ColumnModel } from '@/models'
-import { Board, Column, MoveCardDiffColumnPayload } from '@/types'
+import { Board, MoveCardDiffColumnPayload } from '@/types'
 import { ObjectId } from 'mongodb'
 import slugify from 'slugify'
 import cloneDeep from 'lodash/cloneDeep'
 import { DEFAULT_CURRENT_PAGE, DEFAULT_ITEMS_PER_PAGE } from '@/constants'
 
-const createBoard = async (payload: Board) => {
+const createBoard = async (userId: ObjectId, payload: Board) => {
   const newBoard = {
     ...payload,
     slug: slugify(payload.title, { lower: true })
   }
 
-  const createdBoard = await BoardModel.createBoard(newBoard)
+  const createdBoard = await BoardModel.createBoard(userId, newBoard)
   const board = await BoardModel.findOneById(createdBoard.insertedId)
 
   return board

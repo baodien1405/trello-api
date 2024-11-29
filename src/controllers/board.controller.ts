@@ -5,9 +5,11 @@ import { CREATED, OK, SuccessResponse } from '@/core'
 import { BoardService } from '@/services'
 
 const createBoard = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = new ObjectId(req.user._id)
+
   new CREATED({
     message: 'Created successfully!',
-    metadata: await BoardService.createBoard(req.body)
+    metadata: await BoardService.createBoard(userId, req.body)
   }).send(res)
 }
 

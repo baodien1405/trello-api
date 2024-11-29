@@ -35,9 +35,14 @@ const validateBeforeCreateBoard = async (data: Board) => {
   }
 }
 
-const createBoard = async (data: Board) => {
+const createBoard = async (userId: ObjectId, data: Board) => {
   const validData = await validateBeforeCreateBoard(data)
-  return await getDB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
+  const newBoard = {
+    ...validData,
+    ownerIds: [new ObjectId(userId)]
+  }
+
+  return await getDB().collection(BOARD_COLLECTION_NAME).insertOne(newBoard)
 }
 
 const findOneById = async (id: ObjectId) => {
