@@ -1,8 +1,9 @@
 import Joi, { ValidationError } from 'joi'
+import { ObjectId, WithId } from 'mongodb'
+
 import { Board, Column, QueryBoardParams } from '@/types'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '@/constants'
 import { getDB } from '@/database'
-import { ObjectId, WithId } from 'mongodb'
 import { ConflictRequestError } from '@/core'
 import { getErrorMessage, pagingSkipValue } from '@/utils'
 import { ColumnModel } from './column.model'
@@ -47,16 +48,17 @@ const findOneById = async (id: ObjectId) => {
     })
 }
 
-const getBoardDetails = async (id: ObjectId) => {
+const getBoardDetails = async (userId: ObjectId, boardId: ObjectId) => {
+  const queryConditions = [
+    { _id: new ObjectId(boardId) },
+    { _destroy: false },
+    { $or: [{ ownerIds: { $all: [new ObjectId(userId)] } }, { memberIds: { $all: [new ObjectId(userId)] } }] }
+  ]
+
   const result = await getDB()
     .collection(BOARD_COLLECTION_NAME)
     .aggregate([
-      {
-        $match: {
-          _id: new ObjectId(id),
-          _destroy: false
-        }
-      },
+      { $match: { $and: queryConditions } },
       {
         $lookup: {
           from: ColumnModel.COLUMN_COLLECTION_NAME,

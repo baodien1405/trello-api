@@ -1,6 +1,6 @@
 import { BadRequestError, NotFoundError } from '@/core'
 import { BoardModel, CardModel, ColumnModel } from '@/models'
-import { Board, MoveCardDiffColumnPayload } from '@/types'
+import { Board, Column, MoveCardDiffColumnPayload } from '@/types'
 import { ObjectId } from 'mongodb'
 import slugify from 'slugify'
 import cloneDeep from 'lodash/cloneDeep'
@@ -18,8 +18,8 @@ const createBoard = async (payload: Board) => {
   return board
 }
 
-const getBoardDetails = async (boardId: ObjectId) => {
-  const board = await BoardModel.getBoardDetails(boardId)
+const getBoardDetails = async (userId: ObjectId, boardId: ObjectId) => {
+  const board = await BoardModel.getBoardDetails(userId, boardId)
 
   if (!board) throw new NotFoundError('Board not found!')
 

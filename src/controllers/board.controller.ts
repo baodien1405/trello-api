@@ -13,10 +13,11 @@ const createBoard = async (req: Request, res: Response, next: NextFunction) => {
 
 const getBoardDetails = async (req: Request, res: Response, next: NextFunction) => {
   const boardId = new ObjectId(req.params.id)
+  const userId = new ObjectId(req.user._id)
 
   new OK({
     message: 'Get board successfully!',
-    metadata: await BoardService.getBoardDetails(boardId)
+    metadata: await BoardService.getBoardDetails(userId, boardId)
   }).send(res)
 }
 
