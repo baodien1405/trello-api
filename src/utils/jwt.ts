@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import { AuthFailureError } from '@/core'
 import { AuthPayload } from '@/types'
 import { env } from '@/config'
 
