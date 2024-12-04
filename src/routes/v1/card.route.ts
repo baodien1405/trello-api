@@ -10,10 +10,17 @@ const router = express.Router()
 router.use(authMiddleware.authentication)
 
 router.post('/', validator(cardSchema.createCard), asyncHandler(CardController.createCard))
+
 router.get(
   '/:id',
   validator(cardSchema.getCardDetails, ValidationSource.PARAM),
   asyncHandler(CardController.getCardDetails)
+)
+
+router.patch(
+  '/:id',
+  validator(cardSchema.updateCard, ValidationSource.BODY, { allowUnknown: true }),
+  asyncHandler(CardController.updateCard)
 )
 
 export const CardRoute = router

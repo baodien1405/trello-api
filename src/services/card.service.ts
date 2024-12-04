@@ -1,6 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep'
 import { ObjectId } from 'mongodb'
-import { NotFoundError } from '@/core'
+import { BadRequestError, NotFoundError } from '@/core'
 import { CardModel, ColumnModel } from '@/models'
 import { Card } from '@/types'
 
@@ -25,7 +25,21 @@ const getCardDetails = async (cardId: ObjectId) => {
   return newCard
 }
 
+const updateCard = async (cardId: ObjectId, payload: Partial<Card>) => {
+  const updateData = {
+    ...payload,
+    updatedAt: Date.now()
+  }
+
+  const updatedCard = await CardModel.updateCard(cardId, updateData)
+
+  if (!updatedCard) throw new BadRequestError('Failed to update card!')
+
+  return updatedCard
+}
+
 export const CardService = {
   createCard,
-  getCardDetails
+  getCardDetails,
+  updateCard
 }

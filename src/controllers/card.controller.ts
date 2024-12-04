@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { CREATED, OK } from '@/core'
-import { BoardService, CardService } from '@/services'
+import { CardService } from '@/services'
 import { ObjectId } from 'mongodb'
 
 const createCard = async (req: Request, res: Response, next: NextFunction) => {
@@ -19,7 +19,17 @@ const getCardDetails = async (req: Request, res: Response, next: NextFunction) =
   }).send(res)
 }
 
+const updateCard = async (req: Request, res: Response, next: NextFunction) => {
+  const cardId = new ObjectId(req.params.id)
+
+  new OK({
+    message: 'Update card success!',
+    metadata: await CardService.updateCard(cardId, req.body)
+  }).send(res)
+}
+
 export const CardController = {
   createCard,
-  getCardDetails
+  getCardDetails,
+  updateCard
 }
