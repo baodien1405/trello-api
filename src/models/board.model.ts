@@ -19,7 +19,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object<Board>({
   columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
   ownerIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
   memberIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
-  createdAt: Joi.date().timestamp('javascript').default(Date.now),
+  createdAt: Joi.date().timestamp('javascript').default(Date.now()),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
 })
