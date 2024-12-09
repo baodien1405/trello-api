@@ -3,7 +3,7 @@ import express from 'express'
 import { asyncHandler } from '@/helpers'
 import { cardSchema } from '@/validations'
 import { CardController } from '@/controllers'
-import { authMiddleware, ValidationSource, validator } from '@/middlewares'
+import { authMiddleware, multerUploadMiddleware, ValidationSource, validator } from '@/middlewares'
 
 const router = express.Router()
 
@@ -19,6 +19,7 @@ router.get(
 
 router.patch(
   '/:id',
+  multerUploadMiddleware.upload.single('cardCover'),
   validator(cardSchema.updateCard, ValidationSource.BODY, { allowUnknown: true }),
   asyncHandler(CardController.updateCard)
 )
