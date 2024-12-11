@@ -8,6 +8,7 @@ import { ConflictRequestError } from '@/core'
 import { getErrorMessage, pagingSkipValue } from '@/utils'
 import { ColumnModel } from './column.model'
 import { CardModel } from './card.model'
+import { UserModel } from '@/models/user.model'
 
 const BOARD_COLLECTION_NAME = 'boards'
 
@@ -78,6 +79,24 @@ const getBoardDetails = async (userId: ObjectId, boardId: ObjectId) => {
           localField: '_id',
           foreignField: 'boardId',
           as: 'cards'
+        }
+      },
+      {
+        $lookup: {
+          from: UserModel.USER_COLLECTION_NAME,
+          localField: 'ownerIds',
+          foreignField: '_id',
+          as: 'owners',
+          pipeline: [{ $project: { password: 0, verifyToken: 0 } }]
+        }
+      },
+      {
+        $lookup: {
+          from: UserModel.USER_COLLECTION_NAME,
+          localField: 'memberIds',
+          foreignField: '_id',
+          as: 'members',
+          pipeline: [{ $project: { password: 0, verifyToken: 0 } }]
         }
       }
     ])
