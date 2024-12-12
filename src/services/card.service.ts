@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 
 import { BadRequestError, NotFoundError } from '@/core'
 import { CardModel, ColumnModel } from '@/models'
-import { Card } from '@/types'
+import { AuthPayload, Card, Comment } from '@/types'
 import { CloudinaryProvider } from '@/config'
 
 const createCard = async (payload: Card) => {
@@ -27,7 +27,12 @@ const getCardDetails = async (cardId: ObjectId) => {
   return newCard
 }
 
-const updateCard = async (cardId: ObjectId, payload: Partial<Card>, cardCoverFile?: Express.Multer.File) => {
+const updateCard = async (
+  cardId: ObjectId,
+  payload: Partial<Card & { commentToAdd: Pick<Comment, 'userAvatar' | 'content' | 'userDisplayName'> }>,
+  user: AuthPayload,
+  cardCoverFile?: Express.Multer.File
+) => {
   const updateData: Partial<Card> = {
     updatedAt: Date.now()
   }
@@ -35,6 +40,22 @@ const updateCard = async (cardId: ObjectId, payload: Partial<Card>, cardCoverFil
   if (cardCoverFile) {
     const uploadResult: any = await CloudinaryProvider.streamUpload(cardCoverFile.buffer, 'card-covers')
     updateData.cover = uploadResult.secure_url
+  } else if (payload.commentToAdd) {
+    const commentData = {
+      ...payload.commentToAdd,
+      commentedAt: Date.now(),
+      userId: user._id,
+      userEmail: user.email
+    }
+    const updatedCardComment = await CardModel.unshiftNewComment({
+      cardId,
+      commentData,
+      updatedAt: Date.now()
+    })
+
+    if (!updatedCardComment) throw new BadRequestError('Failed to update card comment!')
+
+    return updatedCardComment
   } else {
     Object.assign(updateData, payload)
   }

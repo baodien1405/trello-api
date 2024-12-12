@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb'
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE, OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '@/constants'
 import { ConflictRequestError } from '@/core'
 import { getDB } from '@/database'
-import { Card } from '@/types'
+import { Card, Comment } from '@/types'
 import { getErrorMessage } from '@/utils'
 
 const CARD_COLLECTION_NAME = 'cards'
@@ -83,11 +83,30 @@ const deleteManyByColumnId = async (columnId: ObjectId) => {
     })
 }
 
+const unshiftNewComment = async ({
+  cardId,
+  commentData,
+  updatedAt
+}: {
+  cardId: ObjectId
+  commentData: Comment
+  updatedAt: number
+}) => {
+  return await getDB()
+    .collection<Card>(CARD_COLLECTION_NAME)
+    .findOneAndUpdate(
+      { _id: new ObjectId(cardId) },
+      { $push: { comments: { $each: [commentData], $position: 0 } }, $set: { updatedAt } },
+      { returnDocument: 'after' }
+    )
+}
+
 export const CardModel = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
   createCard,
   findOneById,
   updateCard,
-  deleteManyByColumnId
+  deleteManyByColumnId,
+  unshiftNewComment
 }

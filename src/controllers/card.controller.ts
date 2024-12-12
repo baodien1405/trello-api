@@ -24,7 +24,7 @@ const updateCard = async (req: Request, res: Response, next: NextFunction) => {
 
   new OK({
     message: 'Update card success!',
-    metadata: await CardService.updateCard(cardId, req.body, req.file)
+    metadata: await CardService.updateCard(cardId, req.body, req.user, req.file)
   }).send(res)
 }
 

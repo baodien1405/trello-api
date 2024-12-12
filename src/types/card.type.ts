@@ -6,7 +6,7 @@ export interface Comment {
   userAvatar: string
   userDisplayName: string
   content: string
-  commentedAt: Date
+  commentedAt: number
 }
 
 export interface Card {
