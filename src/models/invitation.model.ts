@@ -6,6 +6,8 @@ import { ConflictRequestError } from '@/core'
 import { getDB } from '@/database'
 import { Invitation } from '@/types'
 import { getErrorMessage } from '@/utils'
+import { UserModel } from '@/models/user.model'
+import { BoardModel } from '@/models/board.model'
 
 const INVITATION_COLLECTION_NAME = 'invitations'
 
@@ -82,10 +84,58 @@ const updateInvitation = async (invitationId: ObjectId, payload: Partial<Invitat
     .findOneAndUpdate({ _id: new ObjectId(invitationId) }, { $set: payload }, { returnDocument: 'after' })
 }
 
+const getInvitationList = async ({ userId }: { userId: ObjectId }) => {
+  const queryConditions = [{ inviteeId: new ObjectId(userId) }, { _destroy: false }]
+
+  const results = await getDB()
+    .collection(INVITATION_COLLECTION_NAME)
+    .aggregate([
+      { $match: { $and: queryConditions } },
+      { $sort: { createdAt: -1 } },
+      {
+        $lookup: {
+          from: UserModel.USER_COLLECTION_NAME,
+          localField: 'inviterId',
+          foreignField: '_id',
+          as: 'inviter',
+          pipeline: [{ $project: { password: 0, verifyToken: 0 } }]
+        }
+      },
+      {
+        $lookup: {
+          from: UserModel.USER_COLLECTION_NAME,
+          localField: 'inviteeId',
+          foreignField: '_id',
+          as: 'invitee',
+          pipeline: [{ $project: { password: 0, verifyToken: 0 } }]
+        }
+      },
+      {
+        $lookup: {
+          from: BoardModel.BOARD_COLLECTION_NAME,
+          localField: 'boardInvitation.boardId',
+          foreignField: '_id',
+          as: 'board'
+        }
+      }
+    ])
+    .toArray()
+
+  return {
+    results: results.map((x) => ({
+      ...x,
+      inviter: x.inviter[0] || {},
+      invitee: x.invitee[0] || {},
+      board: x.board[0] || {}
+    }))
+  }
+}
+
 export const InvitationModel = {
   INVITATION_COLLECTION_NAME,
   INVITATION_COLLECTION_SCHEMA,
   createNewBoardInvitation,
   findOneById,
-  updateInvitation
+  updateInvitation,
+  getInvitationList
 }

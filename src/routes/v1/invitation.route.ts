@@ -14,4 +14,6 @@ router.post(
   asyncHandler(InvitationController.createNewBoardInvitation)
 )
 
+router.get('/', authMiddleware.authentication, asyncHandler(InvitationController.getInvitationList))
+
 export const InvitationRoute = router

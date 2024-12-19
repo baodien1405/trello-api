@@ -43,6 +43,15 @@ const createNewBoardInvitation = async (body: InvitationPayload, inviterId: Obje
   }
 }
 
+const getInvitationList = async (userId: ObjectId) => {
+  const results = await InvitationModel.getInvitationList({
+    userId: new ObjectId(userId)
+  })
+
+  return results
+}
+
 export const InvitationService = {
-  createNewBoardInvitation
+  createNewBoardInvitation,
+  getInvitationList
 }
