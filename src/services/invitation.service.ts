@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 
 import { BOARD_INVITATION_STATUS, INVITATION_TYPES } from '@/constants'
-import { NotFoundError } from '@/core'
+import { BadRequestError, NotAcceptable, NotFoundError } from '@/core'
 import { BoardModel, InvitationModel, UserModel } from '@/models'
 import { InvitationPayload } from '@/types'
 import { getInfoData } from '@/utils'
@@ -51,7 +51,46 @@ const getInvitationList = async (userId: ObjectId) => {
   return results
 }
 
+const updateBoardInvitation = async ({
+  userId,
+  invitationId,
+  status
+}: {
+  userId: ObjectId
+  invitationId: ObjectId
+  status: keyof typeof BOARD_INVITATION_STATUS
+}) => {
+  const invitation = await InvitationModel.findOneById(invitationId)
+  if (!invitation) throw new NotFoundError('Invitation not found!')
+
+  const boardId = invitation.boardInvitation.boardId
+  const board = await BoardModel.findOneById(boardId)
+  if (!board) throw new NotFoundError('Board not found!')
+
+  const boardOwnerAndMemberIds = [...board.ownerIds, ...board.memberIds].toString()
+  if (status === BOARD_INVITATION_STATUS.ACCEPTED && boardOwnerAndMemberIds.includes(userId.toString())) {
+    throw new NotAcceptable('You are already a member of this board!')
+  }
+
+  const updateData = {
+    boardInvitation: {
+      ...invitation.boardInvitation,
+      status
+    }
+  }
+
+  const updatedInvitation = await InvitationModel.updateInvitation(invitationId, updateData)
+  if (!updatedInvitation) throw new BadRequestError('Failed to update invitation!')
+
+  if (updatedInvitation.boardInvitation.status === BOARD_INVITATION_STATUS.ACCEPTED) {
+    await BoardModel.pushMemberIds(boardId, userId)
+  }
+
+  return updatedInvitation
+}
+
 export const InvitationService = {
   createNewBoardInvitation,
-  getInvitationList
+  getInvitationList,
+  updateBoardInvitation
 }

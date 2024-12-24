@@ -174,6 +174,16 @@ const getBoardList = async ({ page, limit, userId }: QueryBoardParams & { userId
   }
 }
 
+const pushMemberIds = async (boardId: ObjectId, userId: ObjectId) => {
+  return await getDB()
+    .collection<Board>(BOARD_COLLECTION_NAME)
+    .findOneAndUpdate(
+      { _id: new ObjectId(boardId) },
+      { $push: { memberIds: new ObjectId(userId) } },
+      { returnDocument: 'after' }
+    )
+}
+
 export const BoardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
@@ -183,5 +193,6 @@ export const BoardModel = {
   pushColumnOrderIds,
   pullColumnOrderIds,
   updateBoard,
-  getBoardList
+  getBoardList,
+  pushMemberIds
 }

@@ -16,4 +16,11 @@ router.post(
 
 router.get('/', authMiddleware.authentication, asyncHandler(InvitationController.getInvitationList))
 
+router.put(
+  '/board/:id',
+  authMiddleware.authentication,
+  validator(invitationSchema.updateBoardInvitation),
+  asyncHandler(InvitationController.updateBoardInvitation)
+)
+
 export const InvitationRoute = router

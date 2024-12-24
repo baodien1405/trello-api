@@ -1,3 +1,4 @@
+import { BOARD_INVITATION_STATUS } from '@/constants'
 import { ObjectId } from 'mongodb'
 
 export interface InvitationPayload {
@@ -16,4 +17,9 @@ export interface Invitation {
   createdAt?: string
   updatedAt?: string
   _destroy?: boolean
+}
+
+export interface UpdateBoardInvitation {
+  invitationId: ObjectId
+  status: keyof typeof BOARD_INVITATION_STATUS
 }

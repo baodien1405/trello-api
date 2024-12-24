@@ -15,13 +15,28 @@ const createNewBoardInvitation = async (req: Request, res: Response, next: NextF
 
 const getInvitationList = async (req: Request, res: Response, next: NextFunction) => {
   const userId = new ObjectId(req.user._id)
+
   new OK({
     message: 'Get invitations successfully!',
     metadata: await InvitationService.getInvitationList(userId)
   }).send(res)
 }
 
+const updateBoardInvitation = async (req: Request, res: Response, next: NextFunction) => {
+  const payload = {
+    userId: new ObjectId(req.user._id),
+    invitationId: new ObjectId(req.params.id),
+    status: req.body.status
+  }
+
+  new OK({
+    message: 'Get invitations successfully!',
+    metadata: await InvitationService.updateBoardInvitation(payload)
+  }).send(res)
+}
+
 export const InvitationController = {
   createNewBoardInvitation,
-  getInvitationList
+  getInvitationList,
+  updateBoardInvitation
 }
