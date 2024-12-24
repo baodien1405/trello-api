@@ -2,8 +2,9 @@ import express from 'express'
 
 import { InvitationController } from '@/controllers'
 import { asyncHandler } from '@/helpers'
-import { authMiddleware, validator } from '@/middlewares'
+import { authMiddleware, ValidationSource, validator } from '@/middlewares'
 import { invitationSchema } from '@/validations'
+import { extractField } from '@/utils'
 
 const router = express.Router()
 
@@ -17,9 +18,10 @@ router.post(
 router.get('/', authMiddleware.authentication, asyncHandler(InvitationController.getInvitationList))
 
 router.put(
-  '/board/:id',
+  '/board/:invitationId',
   authMiddleware.authentication,
-  validator(invitationSchema.updateBoardInvitation),
+  validator(extractField(invitationSchema.updateBoardInvitation, 'invitationId'), ValidationSource.PARAM),
+  validator(extractField(invitationSchema.updateBoardInvitation, 'status')),
   asyncHandler(InvitationController.updateBoardInvitation)
 )
 
