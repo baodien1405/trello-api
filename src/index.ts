@@ -5,12 +5,15 @@ import compression from 'compression'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import exitHook from 'async-exit-hook'
+import { createServer } from 'node:http'
+import { Server } from 'socket.io'
 
 import App from '@/app'
 import { ErrorResponse } from '@/core'
 import { closeDB, connectDB } from '@/database'
 import { corsOptions, env } from '@/config'
 import { errorHandlingMiddleware } from './middlewares'
+import { inviteUserToBoardSocket } from '@/sockets'
 
 const DELAY = 0
 
@@ -34,6 +37,13 @@ const StartServer = async () => {
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
 
+  const server = createServer(app)
+  const io = new Server(server, { cors: corsOptions })
+
+  io.on('connection', (socket) => {
+    inviteUserToBoardSocket(socket)
+  })
+
   await App(app)
 
   // Handling error
@@ -45,11 +55,11 @@ const StartServer = async () => {
   app.use(errorHandlingMiddleware)
 
   if (env.NODE_ENV === 'production') {
-    app.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT, () => {
       console.log(`3. Production: Listening to the port ${process.env.PORT}`)
     })
   } else {
-    app.listen(env.PORT, () => {
+    server.listen(env.PORT, () => {
       console.log(`3. Local: Listening to the port ${env.PORT}`)
     })
   }
