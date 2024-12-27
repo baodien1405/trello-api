@@ -1,7 +1,13 @@
 import Joi, { ValidationError } from 'joi'
 import { ObjectId } from 'mongodb'
 
-import { EMAIL_RULE, EMAIL_RULE_MESSAGE, OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '@/constants'
+import {
+  CARD_MEMBER_ACTIONS,
+  EMAIL_RULE,
+  EMAIL_RULE_MESSAGE,
+  OBJECT_ID_RULE,
+  OBJECT_ID_RULE_MESSAGE
+} from '@/constants'
 import { ConflictRequestError } from '@/core'
 import { getDB } from '@/database'
 import { Card, Comment } from '@/types'
@@ -101,6 +107,20 @@ const unshiftNewComment = async ({
     )
 }
 
+const updateMembers = async (cardId: ObjectId, incomingMemberInfo: { userId: string; action: string }) => {
+  let updateCondition = {}
+
+  if (incomingMemberInfo.action === CARD_MEMBER_ACTIONS.ADD) {
+    updateCondition = { $push: { memberIds: new ObjectId(incomingMemberInfo.userId) } }
+  } else if (incomingMemberInfo.action === CARD_MEMBER_ACTIONS.REMOVE) {
+    updateCondition = { $pull: { memberIds: new ObjectId(incomingMemberInfo.userId) } }
+  }
+
+  return await getDB()
+    .collection<Card>(CARD_COLLECTION_NAME)
+    .findOneAndUpdate({ _id: new ObjectId(cardId) }, updateCondition, { returnDocument: 'after' })
+}
+
 export const CardModel = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
@@ -108,5 +128,6 @@ export const CardModel = {
   findOneById,
   updateCard,
   deleteManyByColumnId,
-  unshiftNewComment
+  unshiftNewComment,
+  updateMembers
 }

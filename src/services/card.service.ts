@@ -29,7 +29,12 @@ const getCardDetails = async (cardId: ObjectId) => {
 
 const updateCard = async (
   cardId: ObjectId,
-  payload: Partial<Card & { commentToAdd: Pick<Comment, 'userAvatar' | 'content' | 'userDisplayName'> }>,
+  payload: Partial<
+    Card & {
+      commentToAdd: Pick<Comment, 'userAvatar' | 'content' | 'userDisplayName'>
+      incomingMemberInfo: { userId: string; action: string }
+    }
+  >,
   user: AuthPayload,
   cardCoverFile?: Express.Multer.File
 ) => {
@@ -56,6 +61,8 @@ const updateCard = async (
     if (!updatedCardComment) throw new BadRequestError('Failed to update card comment!')
 
     return updatedCardComment
+  } else if (payload.incomingMemberInfo) {
+    return await CardModel.updateMembers(cardId, payload.incomingMemberInfo)
   } else {
     Object.assign(updateData, payload)
   }
