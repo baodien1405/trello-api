@@ -26,3 +26,7 @@ export interface QueryBoardParams {
   limit: number
   page: number
 }
+
+export interface QueryBoardFilters {
+  title: string
+}

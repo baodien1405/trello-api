@@ -1,7 +1,7 @@
 import Joi, { ValidationError } from 'joi'
 import { ObjectId, WithId } from 'mongodb'
 
-import { Board, Column, QueryBoardParams } from '@/types'
+import { Board, Column, QueryBoardFilters, QueryBoardParams } from '@/types'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '@/constants'
 import { getDB } from '@/database'
 import { ConflictRequestError } from '@/core'
@@ -141,11 +141,28 @@ const updateBoard = async (boardId: ObjectId, payload: Partial<Board>) => {
     .findOneAndUpdate({ _id: new ObjectId(boardId) }, { $set: payload }, { returnDocument: 'after' })
 }
 
-const getBoardList = async ({ page, limit, userId }: QueryBoardParams & { userId: ObjectId }) => {
+const getBoardList = async ({
+  page,
+  limit,
+  userId,
+  queryFilters
+}: QueryBoardParams & { userId: ObjectId; queryFilters: QueryBoardFilters }) => {
   const queryConditions = [
     { _destroy: false },
     { $or: [{ ownerIds: { $all: [new ObjectId(userId)] } }, { memberIds: { $all: [new ObjectId(userId)] } }] }
   ]
+
+  if (Object.keys(queryFilters).length > 0) {
+    Object.keys(queryFilters).forEach((key) => {
+      // search case-sensitive
+      // const condition = { [key]: { $regex: queryFilters[key as keyof typeof queryFilters] } } as any
+
+      // search case-insensitive
+      const condition = { [key]: { $regex: new RegExp(queryFilters[key as keyof typeof queryFilters], 'i') } } as any
+
+      queryConditions.push(condition)
+    })
+  }
 
   const query = await getDB()
     .collection(BOARD_COLLECTION_NAME)

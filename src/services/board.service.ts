@@ -1,6 +1,6 @@
 import { BadRequestError, NotFoundError } from '@/core'
 import { BoardModel, CardModel, ColumnModel } from '@/models'
-import { Board, MoveCardDiffColumnPayload } from '@/types'
+import { Board, MoveCardDiffColumnPayload, QueryBoardFilters } from '@/types'
 import { ObjectId } from 'mongodb'
 import slugify from 'slugify'
 import cloneDeep from 'lodash/cloneDeep'
@@ -66,11 +66,12 @@ const moveCardToDifferentColumn = async (payload: MoveCardDiffColumnPayload) => 
   return { updateResult: 'Successfully' }
 }
 
-const getBoardList = async ({ page = DEFAULT_CURRENT_PAGE, limit = DEFAULT_ITEMS_PER_PAGE, userId = '' }) => {
+const getBoardList = async ({ page = DEFAULT_CURRENT_PAGE, limit = DEFAULT_ITEMS_PER_PAGE, userId = '', q = {} }) => {
   const results = await BoardModel.getBoardList({
     page: Number(page),
     limit: Number(limit),
-    userId: new ObjectId(userId)
+    userId: new ObjectId(userId),
+    queryFilters: q as QueryBoardFilters
   })
 
   return results
