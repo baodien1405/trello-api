@@ -11,6 +11,6 @@ router.post('/users/register', validator(authSchema.register), asyncHandler(Auth
 router.post('/users/login', validator(authSchema.login), asyncHandler(AuthController.login))
 router.put('/users/verify', validator(authSchema.verify), asyncHandler(AuthController.verify))
 router.delete('/users/logout', asyncHandler(AuthController.logout))
-router.get('/users/refreshToken', asyncHandler(AuthController.refreshToken))
+router.post('/users/refreshToken', asyncHandler(AuthController.refreshToken))
 
 export const AuthRoute = router

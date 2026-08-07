@@ -53,7 +53,8 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
 
 const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
   const LIFE_TIME_COOKIE = 1000 * 60 * 24 * 14
-  const result = await AuthService.refreshToken(req.cookies?.refreshToken)
+
+  const result = await AuthService.refreshToken(req.body.refreshToken)
 
   res.cookie('accessToken', result.accessToken, {
     httpOnly: true,
