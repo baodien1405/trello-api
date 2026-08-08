@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt'
-import { v4 as uuidv4 } from 'uuid'
 
 import { BrevoProvider, env } from '@/config'
 import { WEBSITE_DOMAIN } from '@/constants'
@@ -23,7 +22,7 @@ const register = async ({ email, password }: Register) => {
     password: passwordHash,
     username: nameFromEmail,
     displayName: nameFromEmail,
-    verifyToken: uuidv4()
+    verifyToken: crypto.randomUUID()
   })
 
   const newUser = await UserModel.findOneById(userCreated.insertedId)
