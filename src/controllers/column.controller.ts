@@ -11,7 +11,7 @@ const createColumn = async (req: Request, res: Response, next: NextFunction) => 
 }
 
 const getColumnDetails = async (req: Request, res: Response, next: NextFunction) => {
-  const columnId = new ObjectId(req.params.id)
+  const columnId = new ObjectId(req.params.id as string)
 
   new OK({
     message: 'Get column successfully!',
@@ -20,7 +20,7 @@ const getColumnDetails = async (req: Request, res: Response, next: NextFunction)
 }
 
 const updateColumn = async (req: Request, res: Response, next: NextFunction) => {
-  const columnId = new ObjectId(req.params.id)
+  const columnId = new ObjectId(req.params.id as string)
 
   new SuccessResponse({
     message: 'Update column success!',
@@ -29,7 +29,7 @@ const updateColumn = async (req: Request, res: Response, next: NextFunction) => 
 }
 
 const deleteColumn = async (req: Request, res: Response, next: NextFunction) => {
-  const columnId = new ObjectId(req.params.id)
+  const columnId = new ObjectId(req.params.id as string)
 
   new SuccessResponse({
     message: 'Delete column success!',

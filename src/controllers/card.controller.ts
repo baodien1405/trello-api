@@ -11,7 +11,7 @@ const createCard = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const getCardDetails = async (req: Request, res: Response, next: NextFunction) => {
-  const cardId = new ObjectId(req.params.id)
+  const cardId = new ObjectId(req.params.id as string)
 
   new OK({
     message: 'Get card successfully!',
@@ -20,7 +20,7 @@ const getCardDetails = async (req: Request, res: Response, next: NextFunction) =
 }
 
 const updateCard = async (req: Request, res: Response, next: NextFunction) => {
-  const cardId = new ObjectId(req.params.id)
+  const cardId = new ObjectId(req.params.id as string)
 
   new OK({
     message: 'Update card success!',

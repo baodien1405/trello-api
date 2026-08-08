@@ -14,7 +14,7 @@ const createBoard = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 const getBoardDetails = async (req: Request, res: Response, next: NextFunction) => {
-  const boardId = new ObjectId(req.params.id)
+  const boardId = new ObjectId(req.params.id as string)
   const userId = new ObjectId(req.user._id)
 
   new OK({
@@ -24,7 +24,7 @@ const getBoardDetails = async (req: Request, res: Response, next: NextFunction) 
 }
 
 const updateBoard = async (req: Request, res: Response, next: NextFunction) => {
-  const boardId = new ObjectId(req.params.id)
+  const boardId = new ObjectId(req.params.id as string)
 
   new SuccessResponse({
     message: 'Update board success!',

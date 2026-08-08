@@ -60,7 +60,7 @@
   - Query column details [Public]:
     - End point: /v1/api/columns/65997af81e7c6ca8b896f571
     - Method: GET
-      
+
   - Update column details [Public]:
     - End point: /v1/api/columns/65997af81e7c6ca8b896f571
     - Method: PATCH
@@ -74,7 +74,7 @@
   - Delete column details [Public]:
     - End point: /v1/api/columns/65997af81e7c6ca8b896f571
     - Method: DELETE
-   
+
 - Card Services
 
   - Create a column [Public]:
@@ -87,7 +87,7 @@
         columnId: '65997af81e7c6ca8b896f571',
         title: Card 01
       }
-        ```
+      ```
   - Query column details [Public]:
     - End point: /v1/api/cards/65997af81e7c6ca8b896f571
     - Method: GET

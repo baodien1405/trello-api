@@ -25,7 +25,7 @@ const getInvitationList = async (req: Request, res: Response, next: NextFunction
 const updateBoardInvitation = async (req: Request, res: Response, next: NextFunction) => {
   const payload = {
     userId: new ObjectId(req.user._id),
-    invitationId: new ObjectId(req.params.invitationId),
+    invitationId: new ObjectId(req.params.invitationId as string),
     status: req.body.status
   }
 
