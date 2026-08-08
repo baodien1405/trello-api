@@ -4,3 +4,5 @@ export * from './card.controller'
 export * from './auth.controller'
 export * from './user.controller'
 export * from './invitation.controller'
+export * from './health.controller'
+

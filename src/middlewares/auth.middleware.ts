@@ -6,7 +6,8 @@ import { verifyJWT } from '@/utils'
 import { env } from '@/config'
 
 const authentication = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const accessToken = req.cookies?.accessToken
+  const authHeader = req.headers.authorization
+  const accessToken = req.cookies?.accessToken || (authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null)
 
   if (!accessToken) throw new AuthFailureError('Token not found')
 
